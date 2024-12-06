@@ -10,11 +10,20 @@ class CitasList extends PrivateController
 {
     public function run(): void
     {
+        // Verificar si se ha enviado una solicitud para confirmar una cita
+        if (isset($_POST['confirmar'])) {
+            $citaID = $_POST['citaID'];  // Asumiendo que el ID de la cita viene en el POST
+            Citas::confirmarCita($citaID);
+        }
+
         $usercod = $_GET['usercod'] ?? '';
-        if (!empty($usercod)) {
-            $citasDao = Citas::obtenerCitasPorUsuario($usercod);
-        } else {
+        $mostrarTodas = isset($_GET['mostrar_todas']);
+        $citasDao = [];
+
+        if ($mostrarTodas) {
             $citasDao = Citas::obtenerCitas();
+        } elseif (!empty($usercod)) {
+            $citasDao = Citas::obtenerCitasPorUsuario($usercod);
         }
 
         foreach ($citasDao as &$cita) {
@@ -25,12 +34,16 @@ class CitasList extends PrivateController
                 "Realizada" => "Realizada"
             ][$cita['EstadoCita']] ?? "Desconocido";
         }
+
         $viewData = [
             "citas" => $citasDao,
             "INS_enable" => $this->isFeatureAutorized('citas_INS_enabled'),
             "UPD_enable" => $this->isFeatureAutorized('citas_UPD_enabled'),
             "DEL_enable" => $this->isFeatureAutorized('citas_DEL_enabled'),
-            "FechaCreacion_enable" => $this->isFeatureAutorized('citas_FechaCreacion'),
+            "Confirmar_enable" => $this->isFeatureAutorized('citas_Confirmar_enabled'),
+            "MostrarDatos_enable" => $this->isFeatureAutorized('citas_MostrarDatos_enabled'),
+            "Pagar_enable" => $this->isFeatureAutorized('citas_Pagar_enabled'),
+            "FechaCreacion_enable" => $this->isFeatureAutorized('citas_fechacreacion_enabled'),
             "usercod" => $usercod
         ];
         Renderer::render('citas/citas', $viewData);

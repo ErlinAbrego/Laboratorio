@@ -1,4 +1,5 @@
 <?php
+
 namespace Controllers\Citas;
 
 use Controllers\PrivateController;
@@ -17,31 +18,31 @@ class CitasForm extends PrivateController
         "DEL" => "Eliminar Cita (%s)"
     ];
     private $mode = '';
-
     private $errors = [];
-
     private $xssToken = '';
 
-    private function addError($error, $context = 'global')
-    {
-        if (isset($this->errors[$context])) {
-            $this->errors[$context][] = $error;
-        } else {
-            $this->errors[$context] = [$error];
-        }
-    }
-
-    // Estructura de la cita
     private $cita = [
         "CitaID" => 0,
-        "usercod" => 0,
+        "usercod" => '',
         "FechaCita" => '',
-        "TipoExamen" => '',
-        "EstadoCita" => 'Pendiente', // Estado predeterminado
+        "ExamenID" => 0,
+        "EstadoCita" => 'Pendiente',
         "FechaCreacion" => '',
-        "FechaModificacion" => ''
+        "FechaModificacion" => '',
+        "telefono" => '',
+        "email" => ''
     ];
 
+    // Agregar un error al arreglo de errores
+    private function addError($error, $context = 'global')
+    {
+        if (!isset($this->errors[$context])) {
+            $this->errors[$context] = [];
+        }
+        $this->errors[$context][] = $error;
+    }
+
+    // Método principal para ejecutar la lógica
     public function run(): void
     {
         $this->inicializarForm();
@@ -55,49 +56,57 @@ class CitasForm extends PrivateController
         Renderer::render('citas/citas_form', $this->viewData);
     }
 
+    // Inicializar formulario basado en el modo
     private function inicializarForm()
     {
         if (isset($_GET["mode"]) && isset($this->modeDscArr[$_GET["mode"]])) {
             $this->mode = $_GET["mode"];
             if ($this->mode !== 'DSP') {
-                if(!$this->isFeatureAutorized("citas_" . $this->mode . "_enabled")){
-                    Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Algo salió mal. Intente de nuevo.");
+                if (!$this->isFeatureAutorized("citas_" . $this->mode . "_enabled")) {
+                    Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Acción no autorizada.");
                 }
             }
         } else {
-            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Algo salió mal. Intente de nuevo.");
+            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Modo inválido.");
             die();
         }
+
         if ($this->mode !== 'INS' && isset($_GET["CitaID"])) {
             $this->cita["CitaID"] = $_GET["CitaID"];
             $this->cargarDatosCita();
         }
     }
 
+    // Cargar los datos de la cita desde la base de datos
     private function cargarDatosCita()
     {
         $tmpCita = Citas::obtenerCitaPorId($this->cita["CitaID"]);
-        // Establecer "Pendiente" por defecto si está vacío
-        if (empty($tmpCita["EstadoCita"])) {
-            $tmpCita["EstadoCita"] = "Pendiente";
+        if ($tmpCita) {
+            $this->cita = $tmpCita;
+        } else {
+            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "No se encontró la cita.");
         }
-        $this->cita = $tmpCita;
     }
 
+    // Cargar los datos del formulario POST
     private function cargarDatosDelFormulario()
     {
         $this->cita["usercod"] = $_POST["usercod"];
         $this->cita["FechaCita"] = $_POST["FechaCita"];
-        $this->cita["TipoExamen"] = $_POST["TipoExamen"];
-        $this->cita["EstadoCita"] = $_POST["EstadoCita"] ?: 'Pendiente'; // Estado predeterminado
+        $this->cita["ExamenID"] = $_POST["ExamenID"];
+        $this->cita["EstadoCita"] = $_POST["EstadoCita"];
         $this->cita["FechaCreacion"] = $_POST["FechaCreacion"];
         $this->cita["FechaModificacion"] = $_POST["FechaModificacion"];
+        $this->cita["telefono"] = $_POST["telefono"];
+        $this->cita["email"] = $_POST["email"];
         $this->xssToken = $_POST["xssToken"];
     }
 
-    private function validarDatos(){
+    // Validar los datos del formulario
+    private function validarDatos()
+    {
         if (!$this->validarAntiXSSToken()) {
-            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Error al procesar la solicitud.");
+            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Error de seguridad al procesar la solicitud.");
         }
 
         if (Validators::IsEmpty($this->cita["usercod"])) {
@@ -108,66 +117,66 @@ class CitasForm extends PrivateController
             $this->addError("La fecha de la cita no puede estar vacía.", "FechaCita");
         }
 
-        if (Validators::IsEmpty($this->cita["TipoExamen"])) {
-            $this->addError("El tipo de examen no puede estar vacío.", "TipoExamen");
+        if (Validators::IsEmpty($this->cita["ExamenID"])) {
+            $this->addError("El ID del examen no puede estar vacío.", "ExamenID");
         }
 
-        if (Validators::IsEmpty($this->cita["EstadoCita"])) {
-            $this->addError("El estado de la cita no puede estar vacío.", "EstadoCita");
+        if (!Validators::IsEmpty($this->cita["email"]) && !Validators::IsValidEmail($this->cita["email"])) {
+            $this->addError("El formato del correo electrónico es inválido.", "email");
         }
 
         return count($this->errors) === 0;
     }
 
+    // Procesar la acción según el modo
     private function procesarAccion()
     {
         switch ($this->mode) {
             case 'INS':
                 $result = Citas::agregarCita($this->cita);
-                if ($result) {
-                    Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Cita registrada satisfactoriamente.");
-                }
+                $this->redirectAfterAction($result, "registrada");
                 break;
             case 'UPD':
                 $result = Citas::actualizarCita($this->cita);
-                if ($result) {
-                    Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Cita actualizada satisfactoriamente.");
-                }
+                $this->redirectAfterAction($result, "actualizada");
                 break;
             case 'DEL':
                 $result = Citas::eliminarCita($this->cita['CitaID']);
-                if ($result) {
-                    Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Cita eliminada satisfactoriamente.");
-                }
+                $this->redirectAfterAction($result, "eliminada");
                 break;
         }
     }
 
+    // Redirigir después de una acción (insertar, actualizar, eliminar)
+    private function redirectAfterAction($result, $accion)
+    {
+        if ($result) {
+            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Cita $accion satisfactoriamente.");
+        } else {
+            Site::redirectToWithMsg("index.php?page=Citas-CitasList", "Hubo un error al $accion la cita.");
+        }
+    }
+
+    // Generar el token anti-XSS
     private function generateAntiXSSToken()
     {
         $_SESSION["Citas_Form_XSST"] = hash("sha256", time() . "Citas_Form");
         $this->xssToken = $_SESSION["Citas_Form_XSST"];
     }
 
+    // Validar el token anti-XSS
     private function validarAntiXSSToken()
     {
-        if (isset($_SESSION["Citas_Form_XSST"])) {
-            return $this->xssToken === $_SESSION["Citas_Form_XSST"];
-        }
-        return false;
+        return isset($_SESSION["Citas_Form_XSST"]) && $this->xssToken === $_SESSION["Citas_Form_XSST"];
     }
 
+    // Preparar los datos para la vista
     private function generarViewData()
     {
         $this->viewData["mode"] = $this->mode;
-        $this->viewData["modes_dsc"] = sprintf(
-            $this->modeDscArr[$this->mode],
-            $this->cita["TipoExamen"],
-            $this->cita["CitaID"]
-        );
+        $this->viewData["modes_dsc"] = sprintf($this->modeDscArr[$this->mode], $this->cita["CitaID"]);
         $this->viewData["cita"] = $this->cita;
-        $this->viewData["readonly"] =
-            ($this->viewData["mode"] === 'DEL' || $this->viewData["mode"] === 'DSP') ? 'readonly' : '';
+        $this->viewData["readonly"] = ($this->viewData["mode"] === 'DEL' || $this->viewData["mode"] === 'DSP') ? 'readonly' : '';
         foreach ($this->errors as $context => $errores) {
             $this->viewData[$context . '_error'] = $errores;
             $this->viewData[$context . '_haserror'] = count($errores) > 0;

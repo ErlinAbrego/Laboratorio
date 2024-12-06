@@ -1,0 +1,114 @@
+.buscar-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    background-color: #f3f3f3;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.buscar-form div {
+    display: flex;
+    align-items: center;
+}
+
+.buscar-form label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.buscar-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.buscar-form input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.buscar-form button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buscar-form button:hover {
+    background-color: #0056b3;
+}
+
+.buscar-form button i {
+    margin-left: 5px;
+}
+
+/* Estilo para el botón de Confirmar Cita */
+.confirmar-cita-btn {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    /* Reduce el tamaño del botón */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.confirmar-cita-btn:hover {
+    background-color: #218838;
+}
+
+/* Estilo para el botón de Mostrar Todas las Citas */
+.mostrar-todas-citas-btn {
+    background-color: #343a40;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.mostrar-todas-citas-btn:hover {
+    background-color: #23272b;
+
+    .carrito-compras-btn {
+        position: relative;
+        background-color: #ffc107;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-left: 10px;
+    }
+
+    .carrito-compras-btn:hover {
+        background-color: #e0a800;
+    }
+
+    .carrito-compras-btn .badge {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+}

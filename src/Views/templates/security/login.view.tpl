@@ -1,35 +1,44 @@
-<section class="fullCenter">
-  <form class="grid" method="post" action="index.php?page=sec_login{{if redirto}}&redirto={{redirto}}{{endif redirto}}">
-    <section class="depth-1 row col-12 col-m-8 offset-m-2 col-xl-6 offset-xl-3">
-      <h1 class="col-12">Iniciar Sesión</h1>
-    </section>
-    <section class="depth-1 py-5 row col-12 col-m-8 offset-m-2 col-xl-6 offset-xl-3">
-      <div class="row">
-        <label class="col-12 col-m-4 flex align-center" for="txtEmail">Correo Electrónico</label>
-        <div class="col-12 col-m-8">
-          <input class="width-full" type="email" id="txtEmail" name="txtEmail" value="{{txtEmail}}" />
+<title>Iniciar Sesión</title>
+<link rel="stylesheet" href="public/css/login.css">
+<!-- Fondo de video -->
+<div class="video-background">
+  <video autoplay loop muted>
+    <source src="SIA.mp4" type="video/mp4">
+    Tu navegador no soporta el elemento de video.
+  </video>
+</div>
+
+<!-- Contenedor del formulario -->
+<div class="container">
+  <div class="login-section">
+    <div class="form-box login">
+      <h2>Iniciar Sesión</h2>
+      <form method="post" action="index.php?page=sec_login{{if redirto}}&redirto={{redirto}}{{endif redirto}}">
+        <div class="input-box">
+          <input type="email" id="txtEmail" name="txtEmail" value="{{txtEmail}}" required>
+          <label for="txtEmail">Correo Electrónico</label>
+          <span class="icon">📧</span>
+          {{if errorEmail}}
+          <div class="error">{{errorEmail}}</div>
+          {{endif errorEmail}}
         </div>
-        {{if errorEmail}}
-          <div class="error col-12 py-2 col-m-8 offset-m-4">{{errorEmail}}</div>
-        {{endif errorEmail}}
-      </div>
-      <div class="row">
-        <label class="col-12 col-m-4 flex align-center" for="txtPswd">Contraseña</label>
-        <div class="col-12 col-m-8">
-         <input class="width-full" type="password" id="txtPswd" name="txtPswd" value="{{txtPswd}}" />
+        <div class="input-box">
+          <input type="password" id="txtPswd" name="txtPswd" value="{{txtPswd}}" required>
+          <label for="txtPswd">Contraseña</label>
+          <span class="icon">🔒</span>
+          {{if errorPswd}}
+          <div class="error">{{errorPswd}}</div>
+          {{endif errorPswd}}
         </div>
-        {{if errorPswd}}
-        <div class="error col-12 py-2 col-m-8 offset-m-4">{{errorPswd}}</div>
-        {{endif errorPswd}}
-      </div>
-    {{if generalError}}
-      <div class="row">
-        {{generalError}}
-      </div>
-    {{endif generalError}}
-    <div class="row right flex-end px-4">
-      <button class="primary" id="btnLogin" type="submit">Iniciar Sesión</button>
+        {{if generalError}}
+        <div class="error">{{generalError}}</div>
+        {{endif generalError}}
+        
+        <button class="btn" id="btnLogin" type="submit">Iniciar Sesión</button>
+        <div class="create-account">
+          <p>¿No tienes cuenta? <a href="index.php?page=sec_register">Regístrate aquí</a></p>
+        </div>
+      </form>
     </div>
-    </section>
-  </form>
-</section>
+  </div>
+</div>

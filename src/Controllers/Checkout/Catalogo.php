@@ -36,7 +36,7 @@ class Catalogo extends PrivateController
     public function run():void
     {
         // code
-        $producto = \Dao\Productos::getAll();
+        $producto = \Dao\Citas\Citas::getAll();
         $carretilla = \Dao\Carretilla::getAll(\Utilities\Security::getUserId());
 
         $carrAssoc = array();

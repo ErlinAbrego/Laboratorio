@@ -1,5 +1,6 @@
-<h1>Orden Aceptada</h1>
-<hr/>
-<pre>
-{{orderjson}}
-</pre>
+<link rel="stylesheet" href="public/css/factura.css">
+
+<h1>Factura de Compra</h1>
+<div class="factura-container">
+    {{factura}}
+</div>

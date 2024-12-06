@@ -1,30 +1,43 @@
+<link rel="stylesheet" href="public/css/login.css">
 <section class="fullCenter">
-  <form class="grid" method="post" action="index.php?page=sec_register">
-    <section class="depth-1 row col-12 col-m-8 offset-m-2 col-xl-6 offset-xl-3">
-      <h1 class="col-12">Crea tu cuenta</h1>
-    </section>
-    <section class="depth-1 py-5 row col-12 col-m-8 offset-m-2 col-xl-6 offset-xl-3">
-      <div class="row">
-        <label class="col-12 col-m-4 flex align-center" for="txtEmail">Correo Electrónico</label>
-        <div class="col-12 col-m-8">
-          <input class="width-full" type="email" id="txtEmail" name="txtEmail" value="{{txtEmail}}" />
-        </div>
-        {{if errorEmail}}
-        <div class="error col-12 py-2 col-m-8 offset-m-4">{{errorEmail}}</div>
-        {{endif errorEmail}}
+  <!-- Fondo de video -->
+  <div class="video-background">
+    <video autoplay loop muted>
+      <source src="SIA.mp4" type="video/mp4">
+      Tu navegador no soporta el elemento de video.
+    </video>
+  </div>
+
+  <div class="container">
+    <div class="login-section">
+      <div class="form-box login">
+        <h2>Crea tu cuenta</h2>
+        <form method="post" action="index.php?page=sec_register">
+          <div class="input-box">
+            <label for="txtEmail">Correo Electrónico</label>
+            <span class="icon">📧</span>
+            <input class="form-input" type="email" id="txtEmail" name="txtEmail" value="{{txtEmail}}" />
+            {{if errorEmail}}
+            <div class="error-message">{{errorEmail}}</div>
+            {{endif errorEmail}}
+          </div>
+          <div class="input-box">
+            <label for="txtPswd">Contraseña</label>
+            <span class="icon">🔒</span>
+            <input class="form-input" type="password" id="txtPswd" name="txtPswd" value="{{txtPswd}}" />
+            {{if errorPswd}}
+            <div class="error-message">{{errorPswd}}</div>
+            {{endif errorPswd}}
+          </div>
+          <div class="form-actions">
+            <button class="btn" id="btnLogin" type="submit">Crear Cuenta</button>
+          </div>
+          <div class="create-account">
+  <p>¿Ya tienes cuenta?<a href="index.php?page=sec_login">Iniciar sesión</a></p>
+</div>
+
+        </form>
       </div>
-      <div class="row">
-        <label class="col-12 col-m-4 flex align-center" for="txtPswd">Contraseña</label>
-        <div class="col-12 col-m-8">
-          <input class="width-full" type="password" id="txtPswd" name="txtPswd" value="{{txtPswd}}" />
-        </div>
-        {{if errorPswd}}
-        <div class="error col-12 py-2 col-m-8 offset-m-4">{{errorPswd}}</div>
-        {{endif errorPswd}}
-      </div>
-      <div class="row right flex-end px-4">
-        <button class="primary" id="btnSignin" type="submit">Crear Cuenta</button>
-      </div>
-    </section>
-  </form>
+    </div>
+  </div>
 </section>
